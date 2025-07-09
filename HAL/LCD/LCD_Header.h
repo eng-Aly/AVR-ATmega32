@@ -9,5 +9,6 @@
 
 
 void LCD_init_8bit();
+void LCD_WriteCommand(u8 command);
 
 #endif
