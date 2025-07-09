@@ -14,3 +14,5 @@ void DIO_PINMode(u8 reg,int SIGNAL, int number ){
         break;
     }
 }
+
+void DIO_DigitalWrite(u8 reg,int SIGNAL,int number){}

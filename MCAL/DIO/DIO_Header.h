@@ -7,6 +7,7 @@
 
 
 void DIO_PINMode(u8 reg,int SIGNAL, int number );
+void DIO_DigitalWrite(u8 reg,int SIGNAL,int number);
 
 
 #endif
