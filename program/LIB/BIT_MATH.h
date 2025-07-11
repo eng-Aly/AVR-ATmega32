@@ -6,8 +6,8 @@
 #define get_bit(reg, number)    (((*reg) >> (number)) & 1)
 #define toggle_bit(reg,number)  (*reg^=(1<<number))
 
-#define set_byte(reg)           reg=0xFF
-#define clear_byte(reg)         reg=0x00
+#define set_byte(reg)           *reg=0xFF
+#define clear_byte(reg)         *reg=0x00
 
 
 

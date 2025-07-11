@@ -6,6 +6,7 @@
 #include "../../LIB/BIT_MATH.h"
 #include "LCD_Private.h"
 #include "LCD_Config.h"
+#include <util/delay.h>
 
 
 void LCD_init_8bit();
