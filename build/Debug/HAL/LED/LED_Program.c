@@ -6,7 +6,7 @@ void LED_Init(volatile u8 *reg,int number){
 }
 
 void LED_PortInit(volatile u8 *reg,int number){
-    set_byte(reg,number);
+    set_byte(reg);
 }
 
 
