@@ -6,7 +6,7 @@
 #define ONE   0b01100000
 #define TWO   0b11011010
 #define THREE 0b11110010
-#define FOUR  0b01100100
+#define FOUR  0b01100110
 #define FIVE  0b10110110
 #define SIX   0b10111110
 #define SEVEN 0b11100000
