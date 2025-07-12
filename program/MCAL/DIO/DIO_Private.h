@@ -7,7 +7,7 @@
 
 
 #define PINB_REG   ((volatile unsigned char*)(0x23))
-#define DDRB_REG   ((volatile unsigned char*)(0x24))
+#define DDRB_REG   ((volatile unsigned char*)(0x37))
 #define PORTB_REG  ((volatile unsigned char*)(0x25))
 
 #define PINC_REG   ((volatile unsigned char*)(0x23))

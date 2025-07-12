@@ -1,6 +1,8 @@
 #include "SSEG_Header.h"
 
 
+u8 COMMON_CATHODE_ARRAY[10]={ZERO,ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE};
+
 void SSEG_Init(volatile u8* reg){
     set_byte(reg);
 }
