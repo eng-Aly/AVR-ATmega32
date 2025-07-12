@@ -62,7 +62,7 @@
     "bit_math.h": "c",
     "dio_private.h": "c",
     "lcd_config.h": "c",
-    "lcd_private.h": "c"
+    "sseg_config.h": "c"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }
