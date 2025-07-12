@@ -3,10 +3,10 @@
 void DIO_PINMode(volatile u8 *reg,int number,int SIGNAL){
     switch (SIGNAL)
     {
-    case OUTPUT:
+    case INPUT:
         clear_bit(reg,number);
         break;
-    case INPUT:
+    case OUTPUT:
         set_bit(reg,number);     
         break;
 
@@ -36,7 +36,8 @@ void DIO_DigitalWrite(volatile u8 *reg,int number,int SIGNAL){
         clear_bit(reg,number);
         break;
     case HIGH:
-            set_bit(reg,number);    
+            set_bit(reg,number);
+            break;    
     
     default:
         break;
