@@ -1,3 +1,4 @@
+#define F_CPU 8000000UL
 #include <util/delay.h>
 #include "../HAL/LED/LED_Header.h"
 
@@ -8,12 +9,25 @@ void setup(){
 }
 
 void loop(){
+    LED_Status(GREENLED_PORT,GREENLED_PIN,LOW);
     LED_Status(REDLED_PORT,REDLED_PIN,HIGH);
-    _delay_ms(3000);
-    LED_Status(YELLOWLED_PORT,REDLED_PIN,HIGH);
-    _delay_ms(3000);
-    LED_Status(GREENLED_PORT,REDLED_PIN,HIGH);
-    _delay_ms(3000);
+    for (int i = 5; i >0; i--)
+    {
+       _delay_ms(100);
+    }
+    _delay_ms(100);
+    LED_Status(REDLED_PORT,REDLED_PIN,LOW);
+    LED_Status(YELLOWLED_PORT,YELLOWLED_PIN,HIGH);
+    for (int i = 5; i >0; i--)
+    {
+       _delay_ms(100);
+    }    
+    LED_Status(YELLOWLED_PORT,YELLOWLED_PIN,LOW);    
+    LED_Status(GREENLED_PORT,GREENLED_PIN,HIGH);
+    for (int i = 5; i >0; i--)
+    {
+       _delay_ms(100);
+    }
     
 }
 
