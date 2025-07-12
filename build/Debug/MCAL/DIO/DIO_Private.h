@@ -6,17 +6,17 @@
 #define PORTA_REG  ((volatile unsigned char*)(0x3B))
 
 
-#define PINB_REG   ((volatile unsigned char*)(0x23))
-#define DDRB_REG   ((volatile unsigned char*)(0x24))
-#define PORTB_REG  ((volatile unsigned char*)(0x25))
+#define PINB_REG   ((volatile unsigned char*)(0x36))
+#define DDRB_REG   ((volatile unsigned char*)(0x37))
+#define PORTB_REG  ((volatile unsigned char*)(0x38))
 
-#define PINC_REG   ((volatile unsigned char*)(0x23))
-#define DDRC_REG   ((volatile unsigned char*)(0x24))
-#define PORTC_REG  ((volatile unsigned char*)(0x25))
+#define PINC_REG   ((volatile unsigned char*)(0x33))
+#define DDRC_REG   ((volatile unsigned char*)(0x34))
+#define PORTC_REG  ((volatile unsigned char*)(0x35))
 
-#define PIND_REG   ((volatile unsigned char*)(0x23))
-#define DDRD_REG   ((volatile unsigned char*)(0x24))
-#define PORTD_REG  ((volatile unsigned char*)(0x25))
+#define PIND_REG   ((volatile unsigned char*)(0x30))
+#define DDRD_REG   ((volatile unsigned char*)(0x31))
+#define PORTD_REG  ((volatile unsigned char*)(0x32))
 
 #define PA0 0
 #define PA1 1
