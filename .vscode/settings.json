@@ -63,7 +63,12 @@
     "dio_private.h": "c",
     "lcd_config.h": "c",
     "sseg_config.h": "c",
-    "lcd_header.h": "c"
+    "lcd_header.h": "c",
+    "stdio.h": "c",
+    "stdlib.h": "c",
+    "globals.h": "c",
+    "patients_linked_list.h": "c",
+    "exti_header.h": "c"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }
