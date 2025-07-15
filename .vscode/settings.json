@@ -69,7 +69,11 @@
     "globals.h": "c",
     "patients_linked_list.h": "c",
     "exti_header.h": "c",
-    "keypad_config.h": "c"
+    "keypad_config.h": "c",
+    "keypad_header.h": "c",
+    "lcd_private.h": "c",
+    "exti_config.h": "c",
+    "dio_interface.h": "c"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }

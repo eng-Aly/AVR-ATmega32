@@ -93,15 +93,7 @@ void EXTI_SetCallBack(u8 INT_PIN,void (*local_FunctionPointer) (void)){
 }
 
 
-/*===========================================================================*/
-/* =====================         TSR Functions          =====================*/
-/*===========================================================================*/
 
-/*****************************************************************************/
-/* Function Name : void __vector_1 (void) [ISR Function]                     */
-/* Description : ISR Prototype (position 1 on vector table INT0 )            */ 
-/* Fun. Return : void                                                        */
-/*****************************************************************************/
 void __vector_1 (void)   __attribute__((signal));
 void __vector_1 (void)
 {
