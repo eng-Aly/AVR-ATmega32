@@ -6,5 +6,7 @@
 #define RISING_EDGE_INT         2
 #define FAILING_RISING_EDGE_INT 3
 
+#define NULL                    (void*)(0)
+
 
 #endif

@@ -81,3 +81,53 @@ void EXTI_Init(u8 INT_PIN,u8 mode){
     EXTI_SetINTMode(INT_PIN,mode);
 }
 
+
+void EXTI_SetCallBack(u8 INT_PIN,void (*local_FunctionPointer) (void)){
+    switch( INT_PIN)
+    {
+        case INT0 :     INT0_Callback = local_FunctionPointer ;     break;
+        case INT1 :     INT1_Callback = local_FunctionPointer ;     break; 
+        case INT2 :     INT2_Callback = local_FunctionPointer ;     break; 
+        default   :                                                        break; 
+    } 
+}
+
+
+/*===========================================================================*/
+/* =====================         TSR Functions          =====================*/
+/*===========================================================================*/
+
+/*****************************************************************************/
+/* Function Name : void __vector_1 (void) [ISR Function]                     */
+/* Description : ISR Prototype (position 1 on vector table INT0 )            */ 
+/* Fun. Return : void                                                        */
+/*****************************************************************************/
+void __vector_1 (void)   __attribute__((signal));
+void __vector_1 (void)
+{
+    if ( INT0_Callback != NULL )
+    {
+        INT0_Callback ();  // calling Global pointer to function that contain address of Application Function with INT0. 
+    }
+
+}
+
+void __vector_2 (void)   __attribute__((signal));
+void __vector_2 (void) 
+{
+    if ( INT1_Callback != NULL )
+    {
+        INT1_Callback ();  // calling Global pointer to function that contain address of Application Function with INT1. 
+    }
+    
+}
+
+void __vector_3 (void)   __attribute__((signal));
+void __vector_3 (void) 
+{
+    if ( INT2_Callback != NULL )
+    {
+        INT2_Callback ();  // calling Global pointer to function that contain address of Application Function with INT2.
+    }
+}
+
