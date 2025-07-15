@@ -46,7 +46,7 @@ void DIO_DigitalWrite(volatile u8 *reg,int number,int SIGNAL){
 
 
 
-int DIO_DigitalRead(volatile u8 *reg,int number){
+u8 DIO_DigitalRead(volatile u8 *reg,int number){
     switch (get_bit(reg,number))
     {
     case HIGH:
