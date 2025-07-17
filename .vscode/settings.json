@@ -73,7 +73,10 @@
     "keypad_header.h": "c",
     "lcd_private.h": "c",
     "exti_config.h": "c",
-    "dio_interface.h": "c"
+    "dio_interface.h": "c",
+    "adc_config.h": "c",
+    "adc_private.h": "c"
   },
-  "C_Cpp.errorSquiggles": "disabled"
+  "C_Cpp.errorSquiggles": "disabled",
+  "C_Cpp.dimInactiveRegions": false
 }
