@@ -50,9 +50,10 @@ u16 ADC_AnalogRead(u8 channel) {
     clear_bit(ADMUX_REG, 2);
     clear_bit(ADMUX_REG, 3);
     clear_bit(ADMUX_REG, 4);
+    
 
 
-    *ADMUX_REG = (*ADMUX_REG & 0b11100000) | (channel & 0b00011111);
+    *ADMUX_REG = *ADMUX_REG | (channel & 0b00011111);
 
     if (get_bit(ADCS_AREG,ADATE)==DISABLE)
     {
