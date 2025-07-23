@@ -75,7 +75,10 @@
     "exti_config.h": "c",
     "dio_interface.h": "c",
     "adc_config.h": "c",
-    "adc_private.h": "c"
+    "adc_private.h": "c",
+    "usart_header.h": "c",
+    "usart_private.h": "c",
+    "usart_config.h": "c"
   },
   "C_Cpp.errorSquiggles": "disabled",
   "C_Cpp.dimInactiveRegions": false
