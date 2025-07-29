@@ -5,12 +5,12 @@
 
 #include "../../MCAL/DIO/DIO_Header.h"
 
-#define RS               PA0
-#define RW               PA1
-#define E                PA2
+#define RS               PD0
+#define RW               PD1
+#define E                PD2
 
-#define CONTROL_DDR       DDRA_REG
-#define CONTROL_PORT      PORTA_REG
+#define CONTROL_DDR       DDRD_REG
+#define CONTROL_PORT      PORTD_REG
 
 #define DATA_DDR         DDRC_REG
 #define DATA_PORT        PORTC_REG

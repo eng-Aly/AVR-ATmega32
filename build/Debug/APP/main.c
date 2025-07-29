@@ -1,133 +1,90 @@
-#include "../MCAL/USART/USART_Header.h"
-#include  "../HAL/LCD/LCD_Header.h"
-#include "../MCAL/DIO/DIO_Header.h"
 #include <stdio.h>
-#include <avr/interrupt.h>  // Needed for sei()
+#include "../MCAL/ADC/ADC_Header.h"
+#include "../MCAL/DIO/DIO_Header.h"
+#include "../HAL/LCD/LCD_Header.h"
+#include "MCU2_CONFIG.h"
 
-u8 recieved_char=0;
 
-void SETUP(){
+
+void setup(){
+    ADC_Init(LEFT_ADJUST,DISABLE,AVCC);
     LCD_init_8bit();
-    USART_Init(BUAD_RATE_9600,PARITY,SPEED_MODE,stop_bits);
-    USART_Async_Read_Data(&recieved_char);
-    sei();
+    DIO_PINMode(LED_DDR,LED,OUTPUT);
+    DIO_PINMode(BUZ_DDR,BUZ,OUTPUT);
+    DIO_PINMode(FAN_DDR,FAN,OUTPUT);    
+}
+
+void loop(){
+    char Light_sensor[16];
+    u16 Light_adc = ADC_AnalogRead(0);
+    float Light_analog = (Light_adc*VCC)/1024.0;
+    int Light = 5-(int)Light_analog;  
+    sprintf(Light_sensor, "%d.%02d V", Light, 00);  
+
+
+    char Temp_sensor[16];
+    u16 Temp_adc=ADC_AnalogRead(1);
+    float Temp_analog=(Temp_adc*5000UL)/1024;
+    int Temp=(int)Temp_analog/10;   
+    sprintf(Temp_sensor, "%d.%02d C", Temp,00 );  // E.g., "2.345 V"
+
+    char Smoke_sensor[16];
+    u16 Smoke_adc=ADC_AnalogRead(2);
+    float Smoke_analog=(Smoke_adc*5000UL)/1024;
+    int Smoke=(int)((Smoke_analog/10)*(125.0/478));   
+    sprintf(Smoke_sensor, "%d.%02d P", Smoke,00 );  // E.g., "2.345 V"
+
+    //Light Control
+    if(Light<1.5){
+        DIO_DigitalWrite(LED_PORT,LED,HIGH);
+    }
+    else{
+        DIO_DigitalWrite(LED_PORT,LED,LOW);
+    }
+
+    // BUZZER control
+    if (Temp > 50 || Smoke > 70) {
+        DIO_DigitalWrite(BUZ_PORT, BUZ, HIGH);
+    } else {
+        DIO_DigitalWrite(BUZ_PORT, BUZ, LOW);
+    }
+
+    // FAN control
+    if (Temp > 30) {
+        DIO_DigitalWrite(FAN_PORT, FAN, HIGH);
+    } else {
+        DIO_DigitalWrite(FAN_PORT, FAN, LOW);
+    }
+
+    // PUMP control
+    if (Smoke > 70) {
+        DIO_DigitalWrite(PUMP_PORT, PUMP, HIGH);
+    } else {
+        DIO_DigitalWrite(PUMP_PORT, PUMP, LOW);
+    }
+    
+
+    
+    LCD_WriteString("Light: ");
+    LCD_WriteString(Light_sensor);
+    LCD_SetCursor(2,0);
+    LCD_WriteString("Temp:");
+    LCD_WriteString(Temp_sensor);
+    LCD_SetCursor(1,8);
+    LCD_WriteString("Smoke:");
+    LCD_WriteString(Smoke_sensor);
+    _delay_ms(10);
+    LCD_Clear();
+
 }
 
 
-/*
-void Loop1(){
-    u8 test_send = 7;
-    u8 *test_recieve=0;
-    USART_Write_Data(test_send);
-    LCD_WriteString("SENT DATA");
-    _delay_ms(200);
-    LCD_Clear();
-    USART_Read_Data(test_recieve);
-    char string_recieved[10];
-    sprintf(string_recieved, "recievied %d", *test_recieve);
-    LCD_WriteString(string_recieved);
-    _delay_ms(200);
-    LCD_Clear();
-}
-
-void Loop2(){
-    u8 test_send = 10;
-    u8 *test_recieve=0;
-    USART_Read_Data(test_recieve);
-    char string_recieved[10];
-    sprintf(string_recieved, "recievied %d", *test_recieve);
-    LCD_WriteString(string_recieved);
-    _delay_ms(200);
-    LCD_Clear();
-    USART_Write_Data(test_send);
-    LCD_WriteString("SENT DATA");
-    _delay_ms(200);
-    LCD_Clear();
-        
-}
-*/
-/*
-void Loop1(){
-    char test_recieve[15];
-    char test='a';
-    char test_send[15]="Hello from mcu1";
-    for (int i=0 ;i<15;i++){
-        USART_Write_Data(test_send[i]);
-    }
-    LCD_WriteString("Data Sent");
-    _delay_ms(200);
-    LCD_Clear();
-    for (int i=0;i<15;i++){
-        LCD_WriteChar('a');
-        USART_Read_Data(&test);
-    }
-    LCD_Clear();
-    LCD_WriteString(test_recieve);
-
-
-}
-void Loop2(){
-    char test_recieve[15];
-    char test='a';
-    char test_send[15]="Hello from mcu2";
-    for (int i=0;i<15;i++){
-        LCD_WriteChar('b');
-        USART_Read_Data(&test);
-    }
-    LCD_WriteString(test_recieve);
-    _delay_ms(200);
-    LCD_Clear();
-    for (int i=0;i<15;i++){
-
-        USART_Write_Data(test_send[i]);
-    }
-    LCD_Clear();
-    LCD_WriteString("Data sent");
-    LCD_Clear();    
-
-
-}
-*/
-void Loop1(){
-    /*
-    if (recieved_char != 0) {
-    LCD_WriteChar(recieved_char);  // Display it or use it
-    recieved_char = 0;             // Reset after processing
-    USART_Async_Read_Data(&recieved_char);  // Set up next read
-    _delay_ms(200);
-    LCD_Clear();
-    }
-    */
-    char test_send[15]="Hello from mcu1";
-    for (int i=0 ;i<15;i++){
-        USART_Write_Data(test_send[i]);
-    }
-    LCD_WriteString("Data sent");
-    _delay_ms(200);
-    LCD_Clear();    
-}
-void Loop2(){
-    if (recieved_char != 0) {
-    LCD_WriteChar(recieved_char);  // Display it or use it
-    recieved_char = 0;             // Reset after processing
-    USART_Async_Read_Data(&recieved_char);  // Set up next read
-    _delay_ms(200);
-    LCD_Clear();
-    }    
-    //char test_send[15]="Hello from mcu2";
-    //for (int i=0 ;i<15;i++){
-    //    USART_Write_Data(test_send[i]);
-    //}
-    //LCD_WriteString("Data sent");
-    //_delay_ms(200);
-    //LCD_Clear(); 
-
-}    
 int main(){
-    SETUP();
-    while (1){
-        Loop1();
+
+    setup();
+    while (1)
+    {
+        loop();
     }
     return 0;
 }
-
