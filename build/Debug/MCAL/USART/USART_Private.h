@@ -1,6 +1,7 @@
 #ifndef USART_PRIVATE_H
 #define USART_PRIVATE_H
 
+#define UD_REG   ((volatile unsigned char*)(0x2C))
 #define UCS_REGA ((volatile unsigned char*)(0x2B))
 #define UCS_REGB ((volatile unsigned char*)(0x2A))
 #define UCS_REGC ((volatile unsigned char*)(0x40))

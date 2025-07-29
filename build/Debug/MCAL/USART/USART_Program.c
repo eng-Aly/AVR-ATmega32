@@ -1,16 +1,21 @@
 #include "USART_Header.h"
 
-void USART_Init(u8 Baud_rate,u8 parity,u8 speed,u8 stop_bit){
+
+void (*ISR_FUNC_POINTER)(void) = NULL;
+u8  data_TX =0  ;
+u8 *data_Rx =0  ; 
+
+void USART_Init(u32 Baud_rate,u8 parity,u8 speed,u8 stop_bit){
     clear_bit(UBR_REGH,UCSRC_URSEL);   //choose the UBR_REGH to set the BAUDRATE
     u16 UBRR=0;                       //getting the ubrr ready
     switch (speed)
     {
     case DOUBLE_SPEED_MODE:
-        UBRR=CPU_CLK/(8*Baud_rate)-1;
+        UBRR=CPU_CLK/(8UL*Baud_rate)-1;
         
         break;
     case NORMAL_SPEED_MODE:
-        UBRR=CPU_CLK/(16*Baud_rate)-1;
+        UBRR=CPU_CLK/(16UL*Baud_rate)-1;
         break;    
     
     default:
@@ -60,4 +65,47 @@ void USART_Init(u8 Baud_rate,u8 parity,u8 speed,u8 stop_bit){
     set_bit(UCS_REGB,UCSRB_TXEN);               
     set_bit(UCS_REGB,UCSRB_RXEN);  
 
+}
+
+
+//pooling 
+void USART_Read_Data(u8 *Data){
+    while (get_bit(UCS_REGA,UCSRA_RXC)==0); 
+    *Data=*UD_REG; //you are passing an addresss in the arguments so you use dereference  && UD_REG is an address so you use dereference       
+}
+void USART_Write_Data(u8 Data){
+    while (get_bit(UCS_REGA,UCSRA_UDRE)==0);
+    *UD_REG=Data;
+    set_bit(UCS_REGA,UCSRA_TXC);
+}
+
+//INTERRUPT
+void USART_Async_Read_Data(u8 *Data){
+    set_bit(UCS_REGB,UCSRB_RXCIE);
+    data_Rx=Data;
+}
+
+void USART_Async_Write_Data(u8 *Data,void (*call_back)(void)){
+    set_bit(UCS_REGB,UCSRB_TXCIE);
+    set_bit(UCS_REGB,UCSRB_UDRIE);
+    data_TX=*Data;
+    ISR_FUNC_POINTER=call_back;    
+}
+
+
+//ISR no13 -in the interrupt vector table-  Of the interrupt signal of pin RXCIE which indicates recieving data 
+void __vector_13 (void)              __attribute__((signal)); 
+void __vector_13 (void){
+        *data_Rx=*UD_REG;   
+}
+
+//ISR no14 of the interrupt signal of pin TXCIE which indicates that the mp has data to be sent 
+void __vector_14 (void)             __attribute__((signal));
+void __vector_14 (void){
+    *UD_REG=data_TX;
+}
+
+void __vector_15 (void)             __attribute__((signal));
+void __vector_15 (void){
+    ISR_FUNC_POINTER();  //the  transmission complete flag raise func in the app 
 }

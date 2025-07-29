@@ -18,7 +18,7 @@
 #define even_parity                                1
 #define odd_parity                                 2
 
-#define PARITY                                     even_parity
+#define PARITY                                     disable_parity
 
 
 #define one_stop_bit                               1

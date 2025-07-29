@@ -78,7 +78,8 @@
     "adc_private.h": "c",
     "usart_header.h": "c",
     "usart_private.h": "c",
-    "usart_config.h": "c"
+    "usart_config.h": "c",
+    "stddef.h": "c"
   },
   "C_Cpp.errorSquiggles": "disabled",
   "C_Cpp.dimInactiveRegions": false
