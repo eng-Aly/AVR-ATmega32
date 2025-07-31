@@ -46,6 +46,19 @@ void LCD_WriteChar(u8 character) {
     DIO_DigitalWrite(CONTROL_PORT, E, LOW);
 }
 
+void LCD_WriteString(u8 *string){
+    u8 i=0;
+    while (string[i]!='\0')
+    {
+        LCD_WriteChar(string[i]);
+        i++;
+    }
+    
+}
+void LCD_Clear(){
+    LCD_WriteCommand(DISPLAY_CLEAR);
+}
+
 
 void LCD_CreateCustomChar(u8 location, u8 pattern[8]) {
     location &= 0x07; 

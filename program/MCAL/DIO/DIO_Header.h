@@ -8,7 +8,7 @@
 
 void DIO_PINMode(volatile u8 *reg,int number,int SIGNAL);
 void DIO_DigitalWrite(volatile u8 *reg,int number,int SIGNAL);
-int DIO_DigitalRead(volatile u8 *reg,int number);
+u8 DIO_DigitalRead(volatile u8 *reg,int number);
 
 void DIO_PORTMode(volatile u8 *reg,int SIGNAL);
 void DIO_PortDigitalWrite(volatile u8 *reg,u8 SIGNAL);

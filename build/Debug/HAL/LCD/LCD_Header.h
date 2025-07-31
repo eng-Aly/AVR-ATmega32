@@ -13,6 +13,8 @@
 void LCD_init_8bit();
 void LCD_WriteCommand(u8 command);
 void LCD_WriteChar(u8 character);
+void LCD_WriteString(u8 *string);
+void LCD_Clear();
 void LCD_CreateCustomChar(u8 location, u8 pattern[8]);
 void LCD_SetCursor(u8 row, u8 col);
 
