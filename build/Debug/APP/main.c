@@ -1,9 +1,20 @@
 #include <util/delay.h>
 #include "../HAL/LCD/LCD_Header.h"
+#include "../MCAL/DIO/DIO_Header.h"
 
 #define SNAKE_CHAR      0
-#define SNAKE_LENGTH    10
+#define SNAKE_LENGTH    5
 #define DELAY_MS        25
+
+#define KEYS_DDR        DDRD_REG
+#define KEYS_PORT       PORTD_REG
+#define KEYS_PINS       PIND_REG
+
+#define UP              PD4
+#define DOWN            PD5
+#define LEFT            PD6
+#define RIGHT           PD7
+
 
 typedef struct {
     u8 row;
@@ -45,6 +56,19 @@ void move_snake(u8 new_row, u8 new_col) {
 
 void setup(){
     LCD_init_8bit();
+    //Init the keys
+    DIO_PINMode(KEYS_DDR,UP,INPUT);
+    DIO_PINMode(KEYS_DDR,DOWN,INPUT);
+    DIO_PINMode(KEYS_DDR,LEFT,INPUT);
+    DIO_PINMode(KEYS_DDR,RIGHT,INPUT);
+
+    //Add pull up to the keys
+    DIO_DigitalWrite(KEYS_PORT,UP,HIGH);
+    DIO_DigitalWrite(KEYS_PORT,DOWN,HIGH);
+    DIO_DigitalWrite(KEYS_PORT,LEFT,HIGH);
+    DIO_DigitalWrite(KEYS_PORT,RIGHT,HIGH);
+
+
 
     u8 dot_symbol[8] = {
         0b00000,
@@ -58,12 +82,15 @@ void setup(){
     };
 
     LCD_CreateCustomChar(SNAKE_CHAR, dot_symbol);
-
     // Initialize snake positions off-screen
     for (u8 i = 0; i < SNAKE_LENGTH; i++) {
         snake_body[i].row = 0;
         snake_body[i].col = 0;
     }
+
+    
+    
+
 }
 
 void loop_snake(){
