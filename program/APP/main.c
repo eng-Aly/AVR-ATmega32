@@ -3,7 +3,7 @@
 #include "../MCAL/DIO/DIO_Header.h"
 
 #define SNAKE_CHAR      0
-#define SNAKE_LENGTH    5
+#define SNAKE_LENGTH    10
 #define DELAY_MS        25
 
 #define KEYS_DDR        DDRD_REG
@@ -14,6 +14,15 @@
 #define DOWN            PD5
 #define LEFT            PD6
 #define RIGHT           PD7
+
+
+#define MAX_COL 16
+#define MAX_ROW 2 
+
+
+typedef enum { DIR_RIGHT, DIR_DOWN, DIR_LEFT, DIR_UP } Direction;
+const int8_t drow[] = { 0, +1,  0, -1 };
+const int8_t dcol[] = {+1,  0, -1,  0 };
 
 
 typedef struct {
@@ -113,6 +122,24 @@ void loop_snake(){
 
 void snake_game_pooling(u8 *L_flag,u8 *R_flag ,u8 *U_flag,u8 *D_flag,u8 *current_row,u8 *current_column){
 
+    for (u8 col = 0; col < 16; col++) {
+        move_snake(0, col);
+        
+        if(~(DIO_DigitalRead(KEYS_PINS,UP))) {
+            LCD_WriteString("A7A");
+            break;}
+        if(~(DIO_DigitalRead(KEYS_PINS,DOWN))) {
+            LCD_WriteString("A7A2");
+            
+            break;}
+        if(~(DIO_DigitalRead(KEYS_PINS,LEFT))) {
+            
+            break;}
+        if(~(DIO_DigitalRead(KEYS_PINS,RIGHT))) {
+            
+            break;}
+        
+    }
     if ((~(DIO_DigitalRead(KEYS_PINS,RIGHT)))&&~(*L_flag))
     {
         *R_flag=1;
@@ -122,8 +149,8 @@ void snake_game_pooling(u8 *L_flag,u8 *R_flag ,u8 *U_flag,u8 *D_flag,u8 *current
         {
             *current_column+=1;
             move_snake(*current_row,*current_column);
-            if(~(DIO_DigitalRead(KEYS_PINS,UP))) {break};
-            if(~(DIO_DigitalRead(KEYS_PINS,DOWN))) {break};
+            if(~(DIO_DigitalRead(KEYS_PINS,UP))) {break;};
+            if(~(DIO_DigitalRead(KEYS_PINS,DOWN))) {break;};
 
         }
         
@@ -138,8 +165,8 @@ void snake_game_pooling(u8 *L_flag,u8 *R_flag ,u8 *U_flag,u8 *D_flag,u8 *current
         {
             *current_column-=1;
             move_snake(*current_row,*current_column);
-            if(~(DIO_DigitalRead(KEYS_PINS,UP))) {break};
-            if(~(DIO_DigitalRead(KEYS_PINS,DOWN))) {break};
+            if(~(DIO_DigitalRead(KEYS_PINS,UP))) {break;};
+            if(~(DIO_DigitalRead(KEYS_PINS,DOWN))) {break;};
 
         }
         
@@ -154,8 +181,8 @@ void snake_game_pooling(u8 *L_flag,u8 *R_flag ,u8 *U_flag,u8 *D_flag,u8 *current
         {
             *current_row+=1;
             move_snake(*current_row,*current_column);
-            if(~(DIO_DigitalRead(KEYS_PINS,LEFT))) {break};
-            if(~(DIO_DigitalRead(KEYS_PINS,RIGHT))) {break};
+            if(~(DIO_DigitalRead(KEYS_PINS,LEFT))) {break;};
+            if(~(DIO_DigitalRead(KEYS_PINS,RIGHT))) {break;};
 
         }
         
@@ -170,8 +197,8 @@ void snake_game_pooling(u8 *L_flag,u8 *R_flag ,u8 *U_flag,u8 *D_flag,u8 *current
         {
             *current_row-=1;
             move_snake(*current_row,*current_column);
-            if(~(DIO_DigitalRead(KEYS_PINS,LEFT))) {break};
-            if(~(DIO_DigitalRead(KEYS_PINS,RIGHT))) {break};
+            if(~(DIO_DigitalRead(KEYS_PINS,LEFT))) {break;};
+            if(~(DIO_DigitalRead(KEYS_PINS,RIGHT))) {break;};
 
         }
         
@@ -180,16 +207,54 @@ void snake_game_pooling(u8 *L_flag,u8 *R_flag ,u8 *U_flag,u8 *D_flag,u8 *current
     
 }
 
-int main(){
-    setup();
-    u8 L_flag=0;
-    u8 R_flag=0;
-    u8 U_flag=0;
-    u8 D_flag=0;
-    u8 current_row=0;
-    u8 current_column=0;
+
+void snake_pooling(Direction *dir, uint8_t *row, uint8_t *col) {
+
+    if (!(DIO_DigitalRead(KEYS_PINS,RIGHT)) && *dir != DIR_LEFT) {
+        *dir = DIR_RIGHT;
+    } else if (!(DIO_DigitalRead(KEYS_PINS,DOWN)) && *dir != DIR_UP) {
+        *dir = DIR_DOWN;
+    } else if (!(DIO_DigitalRead(KEYS_PINS,LEFT)) && *dir != DIR_RIGHT) {
+        *dir = DIR_LEFT;
+    } else if (!(DIO_DigitalRead(KEYS_PINS,UP)) && *dir != DIR_DOWN) {
+        *dir = DIR_UP;
+    }
+
+
+    *row += drow[*dir];
+    *col += dcol[*dir];
+
+
+    if (*col >= MAX_COL || *col < 0 || *row >= MAX_ROW || *row < 0) {
+
+        LCD_Clear();
+        LCD_WriteString("Game Over");
+        _delay_ms(500);
+
+        *row = 0;
+        *col = 0;
+        *dir = DIR_RIGHT;
+        LCD_Clear();
+        return;
+    }
+
+    move_snake(*row, *col);
+
+    _delay_ms(2);
+}
+
+int main(void) {
+    setup();  // your init: LCD_init_8bit(), KEYPAD_INIT(), etc.
+
+    Direction dir = DIR_RIGHT;
+    uint8_t row = 0, col = 0;
+
+    LCD_WriteString("Snake Game");
+    _delay_ms(500);
+    LCD_Clear();
+
     while (1) {
-        loop_snake();
+        snake_pooling(&dir, &row, &col);
     }
     return 0;
 }
