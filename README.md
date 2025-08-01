@@ -11,24 +11,24 @@ this repository contains:
 
 ## Structure
 
-├── MCAL/
-│ ├── DIO/
-│ ├── USART/
-│ ├── I2C/
-│ ├── EXTI/
-│ └── ADC/
-│
-├── HAL/
-│ ├── LCD/
-│ ├── KEYPAD/
-│ └── SSEG/
-│
-├── LIB/
-│ ├── STD_TYPES.h
-│ └── BIT_MATH.h
-│
-├── APPLICATION/
-  └── main.c
+### **MCAL/ – Microcontroller Abstraction Layer**
+### DIO/ – Digital I/O driver
+### USART/ – UART serial communication driver 
+### I2C/ – I2C communication protocol
+### EXTI/ – External interrupt handling
+### ADC/ – Analog to digital converter
+
+### **HAL/ – Hardware Abstraction Layer**
+### LCD/ – Character LCD display driver
+### KEYPAD/ – Matrix keypad driver
+### SSEG/ – Seven segment display driver
+
+### **LIB/ – Common utility files**
+### STD_TYPES.h – Standard types definitions
+### BIT_MATH.h – Bitwise operations macros
+
+### **APPLICATION/ – Main application code**
+### main.c – The main program entry point
 
 
 
