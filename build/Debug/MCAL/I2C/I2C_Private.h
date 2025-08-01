@@ -38,15 +38,9 @@
 #define TWAR_ADDRESS_6_BIT                7
 
 
-#define TWDR_DATA_0_BIT                   0
+#define TWDR_DATA_0_BIT                   0        //for writing conditions
 
-//Status Codes for Master Transmitter
-#define I2C_START_TRANSMITION            0x08
-#define I2C_REPEATED_START_TRANSMITION   0x10
-#define I2C_SLAVE_ADDRESS_W_ACK         0x18
-#define I2C_SLAVE_ADDRESS_W_NACK        0x20
-#define I2C_DATA_TRANSMITTED_ACK         0x28
-#define I2C_DATA_TRANSMITTED_NACK        0x30
+
 
 
 #define NULL                           (void*)(0)
