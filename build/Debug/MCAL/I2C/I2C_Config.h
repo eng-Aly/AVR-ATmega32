@@ -14,7 +14,7 @@
 
 /*===================================================STATUS MESSAGES===============================================================*/
 
-//Status Codes for Master Transmitter
+//Status Codes for Master 
 #define I2C_MASTER_START_TRANSMITION               0x08
 #define I2C_MASTER_REPEATED_START_TRANSMITION      0x10
 #define I2C_SLAVE_ADDRESS_WRITE_ACK                0x18                    //Elslave bey2olk tmam astlmt
@@ -26,4 +26,13 @@
 #define I2C_MASTER_DATA_RECEIVED_ACK               0x50
 #define I2C_MASTER_DATA_RECEIVED_NACK              0x58
 
-#endif
+//Status Codes for Slave
+#define I2C_SLAVE_RECIEVE_ADDRESS_READ_ACK         0x60             //astlmt el address ely hatstlm mno
+#define I2C_SLAVE_TRANSMIT_ADDRESS_READ_ACK        0xA8             //astlmt el address ely htb3tlo
+#define I2C_SLAVE_DATA_RECEIVED_ACK                0x80
+#define I2C_SLAVE_DATA_RECEIVED_NACK               0x88
+#define I2C_SLAVE_DATA_TRANSMITTED_ACK             0xB8
+#define I2C_SLAVE_DATA_TRANSMITTED_NACK            0xC0
+
+
+#endif 
