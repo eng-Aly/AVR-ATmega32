@@ -79,7 +79,8 @@
     "usart_header.h": "c",
     "usart_private.h": "c",
     "usart_config.h": "c",
-    "stddef.h": "c"
+    "stddef.h": "c",
+    "i2c_header.h": "c"
   },
   "C_Cpp.errorSquiggles": "disabled",
   "C_Cpp.dimInactiveRegions": false
