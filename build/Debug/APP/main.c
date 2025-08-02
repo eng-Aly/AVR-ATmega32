@@ -11,7 +11,8 @@ void setup(){
     LCD_init_8bit();
     DIO_PINMode(LED_DDR,LED,OUTPUT);
     DIO_PINMode(BUZ_DDR,BUZ,OUTPUT);
-    DIO_PINMode(FAN_DDR,FAN,OUTPUT);    
+    DIO_PINMode(FAN_DDR,FAN,OUTPUT); 
+    DIO_PINMode(PUMP_DDR,PUMP,OUTPUT);        
 }
 
 void loop(){
@@ -31,7 +32,7 @@ void loop(){
     char Smoke_sensor[16];
     u16 Smoke_adc=ADC_AnalogRead(2);
     float Smoke_analog=(Smoke_adc*5000UL)/1024;
-    int Smoke=(int)((Smoke_analog/10)*(125.0/478));   
+    int Smoke=(int)((Smoke_analog/10)*(120.0/482));   
     sprintf(Smoke_sensor, "%d.%02d P", Smoke,00 );  // E.g., "2.345 V"
 
     //Light Control
