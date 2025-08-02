@@ -2,9 +2,10 @@
 #include "../HAL/LCD/LCD_Header.h"
 #include "../MCAL/DIO/DIO_Header.h"
 
-#define SNAKE_CHAR      0
-#define SNAKE_LENGTH    10
-#define DELAY_MS        25
+#define SNAKE_CHAR       0
+#define MAX_SNAKE_LENGTH 25
+#define SNAKE_LENGTH     3
+#define DELAY_MS         20
 
 #define KEYS_DDR        DDRD_REG
 #define KEYS_PORT       PORTD_REG
@@ -20,6 +21,12 @@
 #define MAX_ROW 2 
 
 
+
+
+
+
+
+
 typedef enum { DIR_RIGHT, DIR_DOWN, DIR_LEFT, DIR_UP } Direction;
 const int8_t drow[] = { 0, +1,  0, -1 };
 const int8_t dcol[] = {+1,  0, -1,  0 };
@@ -30,9 +37,17 @@ typedef struct {
     u8 col;
 } Position;
 
-// Snake position buffer
-Position snake_body[SNAKE_LENGTH];
+u8 current_snake_length = SNAKE_LENGTH;
+Position snake_body[MAX_SNAKE_LENGTH];
 u8 head_index = 0;
+
+
+Position food;
+u16 pseudo_random_seed = 7;
+int food_exists=0; 
+
+
+
 
 // Draw a dot on LCD
 void draw_dot(u8 row, u8 col) {
@@ -46,21 +61,123 @@ void clear_dot(u8 row, u8 col) {
     LCD_WriteChar(' ');
 }
 
-// Store new head position and clear tail
-void move_snake(u8 new_row, u8 new_col) {
-    // Clear tail
-    Position tail = snake_body[head_index];
-    clear_dot(tail.row, tail.col);
 
-    // Add new head
-    snake_body[head_index].row = new_row;
-    snake_body[head_index].col = new_col;
+
+u8 pseudo_random(u8 max) {
+    pseudo_random_seed = (pseudo_random_seed * 37 + 23) % 251;
+    return pseudo_random_seed % max;
+}
+
+void spawn_food() {
+    u8 valid = 0;
+    while (!valid) {
+        food.row = pseudo_random(MAX_ROW);
+        food.col = pseudo_random(MAX_COL);
+
+        valid = 1;
+        food_exists=1;
+        if (snake_body[head_index].row == food.row && snake_body[head_index].col == food.col) {
+            valid = 0;
+            food_exists=0;
+            break;
+        }
+    }
+    
+
+    LCD_SetCursor(food.row, food.col);
+    LCD_WriteChar('*'); // Food character
+}
+
+void move_snake(u8 new_row, u8 new_col) {
+    // 1) Spawn food if needed
+    if (!food_exists) {
+        spawn_food();
+    }
+
+    // 2) Check if we're eating
+    uint8_t ate = (new_row == food.row && new_col == food.col);
+    if (ate) {
+        food_exists = 0;
+        if (current_snake_length < MAX_SNAKE_LENGTH) {
+            current_snake_length++;
+        }
+    }
+
+    // 3) If not eating, clear the tail cell on screen
+    if (!ate) {
+        Position tail = snake_body[current_snake_length - 1];
+        clear_dot(tail.row, tail.col);
+    }
+
+    // 4) Shift body positions back by one
+    //    snake_body[i] = snake_body[i-1], for i from length-1 down to 1
+    for (int i = current_snake_length - 1; i > 0; i--) {
+        snake_body[i] = snake_body[i - 1];
+    }
+
+    // 5) Insert new head at index 0
+    snake_body[0].row = new_row;
+    snake_body[0].col = new_col;
     draw_dot(new_row, new_col);
 
-    // Move index
-    head_index = (head_index + 1) % SNAKE_LENGTH;
-
     _delay_ms(DELAY_MS);
+}
+void loop_snake(){
+    // ➡ Top row right
+    for (u8 col = 0; col < 16; col++) {
+        move_snake(0, col);
+    }
+
+    // ⬇ Right column down
+    move_snake(1, 15);
+
+    // ⬅ Bottom row left
+    for (int col = 14; col >= 0; col--) {
+        move_snake(1, col);
+    }
+
+    // ⬆ Left column up
+    move_snake(0, 0);
+}
+
+
+
+
+void snake_pooling(Direction *dir, uint8_t *row, uint8_t *col) {
+
+    if (!(DIO_DigitalRead(KEYS_PINS,RIGHT)) && *dir != DIR_LEFT) {
+        *dir = DIR_RIGHT;
+    } else if (!(DIO_DigitalRead(KEYS_PINS,DOWN)) && *dir != DIR_UP) {
+        *dir = DIR_DOWN;
+    } else if (!(DIO_DigitalRead(KEYS_PINS,LEFT)) && *dir != DIR_RIGHT) {
+        *dir = DIR_LEFT;
+    } else if (!(DIO_DigitalRead(KEYS_PINS,UP)) && *dir != DIR_DOWN) {
+        *dir = DIR_UP;
+    }
+
+
+    *row += drow[*dir];
+    *col += dcol[*dir];
+
+
+    if (*col >= MAX_COL || *col < 0 || *row >= MAX_ROW || *row < 0) {
+
+        LCD_Clear();
+        LCD_WriteString("Game Over");
+        food_exists=0;
+        current_snake_length=SNAKE_LENGTH;
+        _delay_ms(500);
+
+        *row = 0;
+        *col = 0;
+        *dir = DIR_RIGHT;
+        LCD_Clear();
+        return;
+    }
+
+    move_snake(*row, *col);
+
+    _delay_ms(2);
 }
 
 void setup(){
@@ -102,146 +219,7 @@ void setup(){
 
 }
 
-void loop_snake(){
-    // ➡ Top row right
-    for (u8 col = 0; col < 16; col++) {
-        move_snake(0, col);
-    }
 
-    // ⬇ Right column down
-    move_snake(1, 15);
-
-    // ⬅ Bottom row left
-    for (int col = 14; col >= 0; col--) {
-        move_snake(1, col);
-    }
-
-    // ⬆ Left column up
-    move_snake(0, 0);
-}
-
-void snake_game_pooling(u8 *L_flag,u8 *R_flag ,u8 *U_flag,u8 *D_flag,u8 *current_row,u8 *current_column){
-
-    for (u8 col = 0; col < 16; col++) {
-        move_snake(0, col);
-        
-        if(~(DIO_DigitalRead(KEYS_PINS,UP))) {
-            LCD_WriteString("A7A");
-            break;}
-        if(~(DIO_DigitalRead(KEYS_PINS,DOWN))) {
-            LCD_WriteString("A7A2");
-            
-            break;}
-        if(~(DIO_DigitalRead(KEYS_PINS,LEFT))) {
-            
-            break;}
-        if(~(DIO_DigitalRead(KEYS_PINS,RIGHT))) {
-            
-            break;}
-        
-    }
-    if ((~(DIO_DigitalRead(KEYS_PINS,RIGHT)))&&~(*L_flag))
-    {
-        *R_flag=1;
-        *U_flag=0;
-        *D_flag=0;
-        while (1)
-        {
-            *current_column+=1;
-            move_snake(*current_row,*current_column);
-            if(~(DIO_DigitalRead(KEYS_PINS,UP))) {break;};
-            if(~(DIO_DigitalRead(KEYS_PINS,DOWN))) {break;};
-
-        }
-        
-
-    }
-    if ((~(DIO_DigitalRead(KEYS_PINS,LEFT)))&&~(*R_flag))
-    {
-        *L_flag=1;
-        *U_flag=0;
-        *D_flag=0;
-        while (1)
-        {
-            *current_column-=1;
-            move_snake(*current_row,*current_column);
-            if(~(DIO_DigitalRead(KEYS_PINS,UP))) {break;};
-            if(~(DIO_DigitalRead(KEYS_PINS,DOWN))) {break;};
-
-        }
-        
-
-    }
-    if ((~(DIO_DigitalRead(KEYS_PINS,DOWN)))&&~(*U_flag))
-    {
-        *D_flag=1;
-        *R_flag=0;
-        *L_flag=0;
-        while (1)
-        {
-            *current_row+=1;
-            move_snake(*current_row,*current_column);
-            if(~(DIO_DigitalRead(KEYS_PINS,LEFT))) {break;};
-            if(~(DIO_DigitalRead(KEYS_PINS,RIGHT))) {break;};
-
-        }
-        
-
-    }
-    if ((~(DIO_DigitalRead(KEYS_PINS,UP)))&&~(*D_flag))
-    {
-        *U_flag=1;
-        *R_flag=0;
-        *L_flag=0;
-        while (1)
-        {
-            *current_row-=1;
-            move_snake(*current_row,*current_column);
-            if(~(DIO_DigitalRead(KEYS_PINS,LEFT))) {break;};
-            if(~(DIO_DigitalRead(KEYS_PINS,RIGHT))) {break;};
-
-        }
-        
-
-    }            
-    
-}
-
-
-void snake_pooling(Direction *dir, uint8_t *row, uint8_t *col) {
-
-    if (!(DIO_DigitalRead(KEYS_PINS,RIGHT)) && *dir != DIR_LEFT) {
-        *dir = DIR_RIGHT;
-    } else if (!(DIO_DigitalRead(KEYS_PINS,DOWN)) && *dir != DIR_UP) {
-        *dir = DIR_DOWN;
-    } else if (!(DIO_DigitalRead(KEYS_PINS,LEFT)) && *dir != DIR_RIGHT) {
-        *dir = DIR_LEFT;
-    } else if (!(DIO_DigitalRead(KEYS_PINS,UP)) && *dir != DIR_DOWN) {
-        *dir = DIR_UP;
-    }
-
-
-    *row += drow[*dir];
-    *col += dcol[*dir];
-
-
-    if (*col >= MAX_COL || *col < 0 || *row >= MAX_ROW || *row < 0) {
-
-        LCD_Clear();
-        LCD_WriteString("Game Over");
-        _delay_ms(500);
-
-        *row = 0;
-        *col = 0;
-        *dir = DIR_RIGHT;
-        LCD_Clear();
-        return;
-    }
-
-    move_snake(*row, *col);
-
-    _delay_ms(2);
-}
 
 int main(void) {
     setup();  // your init: LCD_init_8bit(), KEYPAD_INIT(), etc.
