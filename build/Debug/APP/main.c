@@ -4,8 +4,8 @@
 
 #define SNAKE_CHAR       0
 #define MAX_SNAKE_LENGTH 25
-#define SNAKE_LENGTH     3
-#define DELAY_MS         20
+#define SNAKE_LENGTH     5
+#define DELAY_MS         300
 
 #define KEYS_DDR        DDRD_REG
 #define KEYS_PORT       PORTD_REG
