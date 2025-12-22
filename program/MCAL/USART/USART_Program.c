@@ -4,7 +4,7 @@
 void (*ISR_FUNC_POINTER)(void) = NULL;
 u8  data_TX =0  ;
 u8 *data_Rx =0  ; 
-
+/*
 void USART_Init(u32 Baud_rate,u8 parity,u8 speed,u8 stop_bit){
     clear_bit(UBR_REGH,UCSRC_URSEL);   //choose the UBR_REGH to set the BAUDRATE
     u16 UBRR=0;                       //getting the ubrr ready
@@ -66,7 +66,14 @@ void USART_Init(u32 Baud_rate,u8 parity,u8 speed,u8 stop_bit){
     set_bit(UCS_REGB,UCSRB_RXEN);  
 
 }
-
+*/
+void USART_Init(void) {
+    u16 ubrr = MYUBRR;
+    *UBR_REGH = (u8)(ubrr >> 8);
+    *UBR_REGH = (u8)ubrr;
+    *UCS_REGB = (1 << UCSRB_RXEN) | (1 << UCSRB_TXEN);       // Enable TX and RX
+    *UCS_REGC = (1 << UCSRC_URSEL) | (1 << UCSRC_UCSZ1) | (1 << UCSRC_UCSZ0); // 8-bit, no parity, 1 stop
+}
 
 //pooling 
 void USART_Read_Data(u8 *Data){
@@ -76,7 +83,11 @@ void USART_Read_Data(u8 *Data){
 void USART_Write_Data(u8 Data){
     while (get_bit(UCS_REGA,UCSRA_UDRE)==0);
     *UD_REG=Data;
-    set_bit(UCS_REGA,UCSRA_TXC);
+    //set_bit(UCS_REGA,UCSRA_TXC);  //commented to test
+}
+void UART_SendChar(char data) {
+	*UD_REG =data;
+	while(!(*UCS_REGA& (1<<UCSRA_TXC)));;
 }
 
 //INTERRUPT

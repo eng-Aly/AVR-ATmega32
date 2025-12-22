@@ -1,5 +1,5 @@
 #include "ADC_Header.h"
-
+/*
 void ADC_Init(u8 adjust, u8 enableAutoTrigger, u8 referenceVoltage) {
     set_bit(ADCS_AREG, ADEN); // Enable ADC
     if (enableAutoTrigger == ENABLE)
@@ -41,8 +41,16 @@ void ADC_Init(u8 adjust, u8 enableAutoTrigger, u8 referenceVoltage) {
     set_bit(ADCS_AREG, ADPS1);
     set_bit(ADCS_AREG, ADPS2);
 }
+*/
+void ADC_Init(u8 adjust, u8 enableAutoTrigger, u8 referenceVoltage) {
+
+    *ADMUX_REG  = (1 << REFS0);         // AVCC reference, right adjust
+    *ADCS_AREG = (1 << ADEN) |         // Enable ADC
+             (1 << ADPS2) | (1 << ADPS1);  // Prescaler 64
+}
 
 
+/*
 u16 ADC_AnalogRead(u8 channel) {
     // clear the previous ADC channel
     clear_bit(ADMUX_REG, 0);
@@ -65,7 +73,7 @@ u16 ADC_AnalogRead(u8 channel) {
     }
     else if (get_bit(ADCS_AREG,ADATE)==ENABLE)
     {
-        /* code */
+        
     }
     
     
@@ -80,3 +88,18 @@ u16 ADC_AnalogRead(u8 channel) {
        return *ADC_REG;        
     }    
 }
+*/
+u16 ADC_AnalogRead(u8 channel) {
+
+    *ADMUX_REG = (*ADMUX_REG & 0xE0) | (channel & 0x1F);
+
+    *ADCS_AREG |= (1 << ADSC);
+
+    while (*ADCS_AREG & (1 << ADSC));   // Wait
+
+    u16 result = *ADCL_REG;         // MUST read ADCL first
+    result |= (*ADCH_REG << 8);
+
+    return result;
+}
+
